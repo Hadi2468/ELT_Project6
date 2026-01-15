@@ -41,12 +41,12 @@ Includes attendee info, scheduled event details, timezone, UTM parameters
 Below is an example of a Calendly Webhook invitee.curated event:  
 [6705dded-8f97-4cea-8d12-491e10d8bcd5.json](6705dded-8f97-4cea-8d12-491e10d8bcd5.json)
 
+2️⃣ **Marketing Spend Data:** daily spend per campaign in JSON from S3  
+
 **Event types per campaign:**
 - Facebook Paid Ads
 - YouTube Paid Ads
 - TikTok Paid Ads
-
-2️⃣ **Marketing Spend Data:** daily spend per campaign in JSON from S3  
 
 #### 📄 Sample Marketing data (Youtube)
 [spend-date-2026-01-14.json](spend-date-2026-01-14.json)
