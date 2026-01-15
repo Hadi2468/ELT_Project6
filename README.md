@@ -48,12 +48,25 @@ Below is an example of a Calendly Webhook invitee.curated event:
 
 2️⃣ **Marketing Spend Data:** daily spend per campaign in JSON from S3  
 
-**Example:**
+#### 📄 Sample Marketing data (Youtube)
+[spend-date-2026-01-14.json](spend-date-2026-01-14.json)
 ```json
 [
-  {"date": "2026-01-14", "channel": "facebook_paid_ads", "spend": 653.28},
-  {"date": "2026-01-14", "channel": "youtube_paid_ads", "spend": 487.59},
-  {"date": "2026-01-14", "channel": "tiktok_paid_ads", "spend": 345.12}
+  {
+    "date": "2026-01-14",
+    "channel": "youtube_paid_ads",
+    "spend": 827.67
+  },
+  {
+    "date": "2026-01-14",
+    "channel": "facebook_paid_ads",
+    "spend": 529.79
+  },
+  {
+    "date": "2026-01-14",
+    "channel": "tiktok_paid_ads",
+    "spend": 327.92
+  }
 ]
 ```
 ## ➡️ ETL Layers
