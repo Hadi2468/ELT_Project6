@@ -37,6 +37,9 @@ Analytics & Visualization (Streamlit Dashboard)
 ## 🛢️ Data Sources
 1️⃣ **Calendly Webhooks:** event-based booking data (invitee.created)
 Includes attendee info, scheduled event details, timezone, UTM parameters  
+#### 📄 Sample Invitee Event
+Below is an example of a Calendly Webhook invitee.curated event:  
+[6705dded-8f97-4cea-8d12-491e10d8bcd5.json](6705dded-8f97-4cea-8d12-491e10d8bcd5.json)
 
 **Event types per campaign:**
 - Facebook Paid Ads
