@@ -14,8 +14,7 @@
       "Parameters": {
         "JobName": "project6-marketing-bronze",
         "Arguments": {
-          "--input_bucket": "s3://project6-bronze-bucket/",
-          "--output_bucket": "s3://project6-silver-bucket/"
+          "--BRONZE_BUCKET": "project6-bronze-bucket"
         }
       },
       "Next": "project6-bronze-silver-emr"
