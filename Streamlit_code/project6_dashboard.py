@@ -6,6 +6,9 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import altair as alt
+import json
+import boto3
+from botocore.exceptions import ClientError
 
 # ============================================
 # ⚙️ Streamlit Page Layout
@@ -21,6 +24,7 @@ st.sidebar.header("☰ Metrics")
 menu = st.sidebar.radio(
     "🔍 **Select Dashboard**",
     [
+        "CI/CD Configuration",
         "Daily Calls Booked by Channel",
         "CPB by Channel",
         "Channel Attribution Leaderboard",
@@ -28,6 +32,41 @@ menu = st.sidebar.radio(
         "Meeting Load per Employee"
     ]
 )
+
+# ============================================
+# 0️⃣ Check menu option
+# ============================================
+# ============================================
+# Trigger Project 6 Step Function
+# ============================================
+def trigger_state_machine(state_machine_arn, input_dict=None):
+    try:
+        sf_client = boto3.client("stepfunctions", region_name="us-east-1")
+
+        response = sf_client.start_execution(
+            stateMachineArn=state_machine_arn,
+            input=json.dumps(input_dict or {})  # must be JSON string
+        )
+
+        st.success(f"✅ Project 6 orchestration started!")
+        st.info(f"Execution ARN: {response['executionArn']}")
+
+        return response["executionArn"]
+
+    except ClientError as e:
+        st.error(f"❌ Failed to start state machine: {e}")
+        return None
+    
+
+if menu == "CI/CD Configuration":
+    st.header("⚙️ CI/CD Configuration")
+    col1, col2, col3 = st.columns(3)
+    with col2:
+        if st.button("▶️ Run Project 6 ETL Pipeline"):
+            state_machine_arn = "arn:aws:states:us-east-1:000185048470:stateMachine:project6-state-machine"
+            trigger_state_machine(state_machine_arn)
+    st.markdown("---")
+
 
 # ============================================
 # Paths to Gold Parquet files (S3)
@@ -57,6 +96,8 @@ cpb_df = load_data(PATHS["cpb"])
 channel_df = load_data(PATHS["channel"])
 booking_time_df = load_data(PATHS["booking_time"])
 meeting_df = load_data(PATHS["meeting_load"])
+
+
 
 # ============================================
 # DASHBOARD PAGES

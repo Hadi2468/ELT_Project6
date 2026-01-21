@@ -1,32 +1,42 @@
 {
-  "Comment": "Project 6 ETL Orchestration",
+  "Comment": "💫 Project 6 ETL Orchestration Workflow",
   "StartAt": "TriggerCodePipeline",
   "States": {
+
     "TriggerCodePipeline": {
       "Type": "Task",
-      "Resource": "arn:aws:states:::codepipeline:startPipelineExecution",
-      "Parameters": { "Name": "project6-github-codepipeline" },
+      "Comment": "💡 Trigger the GitHub CodePipeline to ensure latest code is deployed",
+      "Resource": "arn:aws:lambda:us-east-1:000185048470:function:project6-trigger-code-pipeline",
+      "Parameters": {
+        "Name": "project6-github-codepipeline"
+      },
       "Next": "RunGlueMarketingBronze"
     },
+
     "RunGlueMarketingBronze": {
       "Type": "Task",
+      "Comment": "🧺 Run the Glue job to ingest marketing data into Bronze layer",
       "Resource": "arn:aws:states:::glue:startJobRun.sync",
       "Parameters": {
-        "JobName": "project6-marketing-bronze",
+        "JobName": "project6-bronze",
         "Arguments": {
           "--BRONZE_BUCKET": "project6-bronze-bucket"
         }
       },
       "Next": "project6-bronze-silver-emr"
     },
+
     "project6-bronze-silver-emr": {
       "Type": "Parallel",
+      "Comment": "🗑️ Process Bronze layer data in parallel into Silver layer (Events & Marketing)",
       "Branches": [
+
         {
           "StartAt": "SilverEventsJob",
           "States": {
             "SilverEventsJob": {
               "Type": "Task",
+              "Comment": "📅 Transform Events data from Bronze -> Silver using EMR Serverless Spark",
               "Resource": "arn:aws:states:::emr-serverless:startJobRun.sync",
               "Parameters": {
                 "ApplicationId": "00g2mkec38ghf109",
@@ -34,7 +44,11 @@
                 "JobDriver": {
                   "SparkSubmit": {
                     "EntryPoint": "s3://project6-code-bucket/Spark_codes/project6-silver-events.py",
-                    "EntryPointArguments": ["project6-bronze-bucket", "events/", "project6-silver-bucket"],
+                    "EntryPointArguments": [
+                      "project6-bronze-bucket",
+                      "events/",
+                      "project6-silver-bucket"
+                    ],
                     "SparkSubmitParameters": "--jars s3://project6-jars/delta-core_2.12-2.1.0.jar,s3://project6-jars/hadoop-aws-3.3.4.jar,s3://project6-jars/aws-java-sdk-bundle-1.12.538.jar --conf spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog --conf spark.sql.sources.partitionOverwriteMode=dynamic --conf spark.delta.logStore.class=org.apache.spark.sql.delta.storage.S3SingleDriverLogStore"
                   }
                 }
@@ -43,11 +57,13 @@
             }
           }
         },
+
         {
           "StartAt": "SilverMarketingJob",
           "States": {
             "SilverMarketingJob": {
               "Type": "Task",
+              "Comment": "💰 Transform Marketing data from Bronze -> Silver using EMR Serverless Spark",
               "Resource": "arn:aws:states:::emr-serverless:startJobRun.sync",
               "Parameters": {
                 "ApplicationId": "00g2mkec38ghf109",
@@ -55,7 +71,11 @@
                 "JobDriver": {
                   "SparkSubmit": {
                     "EntryPoint": "s3://project6-code-bucket/Spark_codes/project6-silver-marketing.py",
-                    "EntryPointArguments": ["project6-bronze-bucket", "marketing/", "project6-silver-bucket"],
+                    "EntryPointArguments": [
+                      "project6-bronze-bucket",
+                      "marketing/",
+                      "project6-silver-bucket"
+                    ],
                     "SparkSubmitParameters": "--jars s3://project6-jars/delta-core_2.12-2.1.0.jar,s3://project6-jars/hadoop-aws-3.3.4.jar,s3://project6-jars/aws-java-sdk-bundle-1.12.538.jar --conf spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog --conf spark.sql.sources.partitionOverwriteMode=dynamic --conf spark.delta.logStore.class=org.apache.spark.sql.delta.storage.S3SingleDriverLogStore"
                   }
                 }
@@ -64,11 +84,14 @@
             }
           }
         }
+
       ],
       "Next": "project6-silver-gold-emr"
     },
+
     "project6-silver-gold-emr": {
       "Type": "Task",
+      "Comment": "🏆 Transform Silver layer data into Gold layer using EMR Serverless Spark",
       "Resource": "arn:aws:states:::emr-serverless:startJobRun.sync",
       "Parameters": {
         "ApplicationId": "00g2o8eatb8fni09",
@@ -76,12 +99,16 @@
         "JobDriver": {
           "SparkSubmit": {
             "EntryPoint": "s3://project6-code-bucket/Spark_codes/project6-gold.py",
-            "EntryPointArguments": ["project6-silver-bucket", "project6-gold-bucket"],
+            "EntryPointArguments": [
+              "project6-silver-bucket",
+              "project6-gold-bucket"
+            ],
             "SparkSubmitParameters": "--jars s3://project6-jars/delta-core_2.12-2.1.0.jar,s3://project6-jars/hadoop-aws-3.3.4.jar,s3://project6-jars/aws-java-sdk-bundle-1.12.538.jar --conf spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog --conf spark.sql.sources.partitionOverwriteMode=dynamic --conf spark.delta.logStore.class=org.apache.spark.sql.delta.storage.S3SingleDriverLogStore"
           }
         }
       },
       "End": true
     }
+
   }
 }
