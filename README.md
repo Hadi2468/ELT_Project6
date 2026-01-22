@@ -146,13 +146,13 @@ Curated Delta Table (Gold Layer):          gold_event_202601114.delta
 ``` 
 
 ## 🌟 Results
-☑️ Near real-time streaming ingestion of Calendly events 
+☑️ Near real-time streaming ingestion of Calendly events   
 ☑️ End-to-end ELT pipeline successfully implemented  
-☑️ Reliable Bronze → Silver → Gold transformations  
-☑️ Explicit schemas and data quality enforcement 
+☑️ Reliable Bronze → Silver → Gold transformations   
+☑️ Explicit schemas and data quality enforcement  
 ☑️ Incremental and late-arriving data support  
 ☑️ Interactive Streamlit dashboard for analytics  
-☑️ Serverless orchestration with Step Functions
+☑️ Serverless orchestration with Step Functions  
 ☑️ CI/CD pipeline for automated deployment  
 
 
