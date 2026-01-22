@@ -64,11 +64,11 @@ Supported channels:
 
 ## ➡️ Data Schemas (Data Contracts)
 ### 🟫 Bronze Layer – Raw Events (Append-Only)
-- invitee_id: string
-- event_type: string
 - event_created_at: timestamp
+- invitee_id: string
 - invitee_email: string
 - scheduled_event_start_time: timestamp
+- event_type: string
 - utm_source: string
 - utm_campaign: string
 - raw_payload: struct (JSON)
