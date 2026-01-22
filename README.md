@@ -22,16 +22,16 @@ This project addresses:
 ![System-Design](project6_system_design.png)
 ```text
 Calendly Webhooks & Marketing Spend Data
-   ↓ (Glue Job – ETL)
+   ↓ (Incremental ETL)
 AWS Glue
    ↓
 Bronze Layer (Raw JSON in S3)
    ↓
-Silver Layer (Cleaned & Flattened Data)
+Silver Layer (Validated, Flattened, Cleaned, Deduplicated)
    ↓
 Gold Layer (Curated Delta Lake Tables)
    ↓
-Analytics & Visualization (Streamlit Dashboard)
+Analytics & Visualization (Athena + Streamlit)
 ```
 
 ## 🛢️ Data Sources
