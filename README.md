@@ -1,19 +1,20 @@
 # ELT_Project 6: Marketing & Calendly Data Engineering
 
 ## 🧠 Overview
-This project implements a production-ready data engineering pipeline using AWS Glue, Delta Lake, and S3 to process marketing and Calendly data.
+This project implements a **production-ready ELT data engineering pipeline** using **AWS Glue, Delta Lake, and Amazon S3** to process marketing spend data and Calendly booking events.
 
+The pipeline follows a **Bronze → Silver → Gold** architecture with explicit data contracts, data quality checks, and incremental processing to ensure reliability, scalability, and analytics readiness.
 ### The pipeline enables:
-- Ingestion of raw marketing and Calendly events **(🟤 Bronze layer)** 
-- Data cleaning, transformation, and deduplication **(⚪ Silver layer)**  
-- Curated Delta tables ready for analytics and visualization **(🟡 Gold layer)**  
-- Incremental updates and reliable orchestration via Glue Workflows  
+- Ingestion of raw Calendly webhook and marketing spend data (🟤 Bronze layer)
+- Data cleaning, validation, transformation, and deduplication (⚪ Silver layer)
+- Curated, analytics-ready Delta tables (🟡 Gold layer)
+- Incremental processing, late-arriving data handling, and reliable orchestration via Step Functions 
 
 ## 🎯 Business Objective  
 Organizations need insights into marketing campaigns and meeting scheduling to optimize spend and improve conversions.  
 
 This project addresses:    
-✔️ Tracking daily bookings from Calendly per marketing channel  
+✔️ Tracking daily Calendly bookings from Calendly per marketing channel  
 ✔️ Calculating Cost Per Booking (CPB) to identify cost-efficient campaigns  
 ✔️ Understanding booking trends, channel attribution, and employee workload  
 ✔️ Providing a robust, Delta Lake-based data pipeline for analytics and dashboards  
