@@ -99,7 +99,8 @@ Bronze data preserves source-system fidelity and is not mutated.
 
 Designed for BI tools, dashboards, and ad-hoc SQL queries.
 
-### ✅ Data Quality Checks
+
+## ✅ Data Quality Checks
 Data quality validations are enforced primarily in the Silver and Gold layers:
 - Not-null checks on primary keys (invitee_id)
 - Timestamp sanity checks (event_time ≤ ingestion_time)
@@ -109,13 +110,24 @@ Data quality validations are enforced primarily in the Silver and Gold layers:
 
 Invalid or rejected records can be isolated for monitoring and troubleshooting.
 
-### 🧩 Partition Strategy (Delta Lake)
+
+## 🧩 Partition Strategy (Delta Lake)
 Delta tables are partitioned by booking_date to:
 - Minimize data scanned during time-based queries
 - Improve Spark and Athena query performance
 - Support efficient incremental loads and reprocessing
 
 Partitioning is intentionally kept low-cardinality to avoid small-file and metadata issues.
+
+## ⏱️ Late-Arriving Data Handling
+
+Late-arriving Calendly events are handled using:
+- Separation of event time and ingestion time
+- Incremental processing windows (e.g., reprocessing last N days)
+- Delta Lake MERGE (UPSERT) operations in Silver and Gold layers
+
+This design allows historical partitions to be updated without full reloads.
+
 
 ## 📊 Key Metrics & Business Insights
 ✅ Daily Calls Booked by Source – count of Calendly bookings per source per day  
@@ -125,6 +137,7 @@ Partitioning is intentionally kept low-cardinality to avoid small-file and metad
 ✅ Booking Volume by Time Slot / Day of Week – identify peak booking periods  
 ✅ Employee Meeting Load – weekly average meetings per employee  
 
+
 ## 📄 Sample Data
 ```
 Calendly Webhook Event (Bronze Layer):     invitee_created_202601114.json   
@@ -133,16 +146,21 @@ Curated Delta Table (Gold Layer):          gold_event_202601114.delta
 ``` 
 
 ## 🌟 Results
-☑️ Raw Calendly & marketing data ingested successfully  
-☑️ Bronze → Silver → Gold transformations applied with Delta Lake  
-☑️ Metrics such as CPB, booking trends, and employee load calculated  
-☑️ Interactive Streamlit dashboard created for visualization  
-☑️ Serverless orchestration with AWS Glue workflows implemented
-☑️ Near real-time streaming ingestion of Calendly events  
+☑️ Near real-time streaming ingestion of Calendly events 
+☑️ End-to-end ELT pipeline successfully implemented  
+☑️ Reliable Bronze → Silver → Gold transformations  
+☑️ Explicit schemas and data quality enforcement 
+☑️ Incremental and late-arriving data support  
+☑️ Interactive Streamlit dashboard for analytics  
+☑️ Serverless orchestration with Step Functions
 ☑️ CI/CD pipeline for automated deployment  
 
+
 ## 🔜 Future Enhancements
-💡 Automated anomaly detection on booking trends  
+- Automated anomaly detection on booking trends  
+- Data quality monitoring dashboards  
+- SLA alerts for pipeline failures or data delays  
+
 
 ## 🧑🏻‍💻 Author
 **Hadi Hosseini**  
