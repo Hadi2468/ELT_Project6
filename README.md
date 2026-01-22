@@ -34,46 +34,88 @@ Gold Layer (Curated Delta Lake Tables)
    ↓
 Analytics & Visualization (Athena + Streamlit)
 ```
-
 ## 🛢️ Data Sources
-1️⃣ **Calendly Webhooks:** event-based booking data (invitee.created)
-Includes attendee info, scheduled event details, timezone, UTM parameters  
-#### 📄 Sample Invitee Event
-Below is an example of a Calendly Webhook invitee.curated event:  
-[6705dded-8f97-4cea-8d12-491e10d8bcd5.json](6705dded-8f97-4cea-8d12-491e10d8bcd5.json)
+1️⃣ **Calendly Webhooks:**  
+Event-based booking data (`invitee.created`) including:
+- Attendee information
+- Scheduled event details
+- Timezone and timestamps
+- UTM parameters for attribution
+ 
+📄 Sample Invitee Event: [6705dded-8f97-4cea-8d12-491e10d8bcd5.json](6705dded-8f97-4cea-8d12-491e10d8bcd5.json)
 
-2️⃣ **Marketing Spend Data:** daily spend per campaign in JSON from S3  
 
-**Event types per campaign:**
+2️⃣ **Marketing Spend Data:**  
+Daily spend per campaign in JSON from S3.  
+
+Supported channels:
 - Facebook Paid Ads
 - YouTube Paid Ads
 - TikTok Paid Ads
 
-#### 📄 Sample Marketing data (Youtube)
-[spend-date-2026-01-14.json](spend-date-2026-01-14.json)
+📄 Sample marketing spend record (YouTube)
 ```json
-[
-  {
-    "date": "2026-01-14",
-    "channel": "youtube_paid_ads",
-    "spend": 827.67
-  },
-  {
-    "date": "2026-01-14",
-    "channel": "facebook_paid_ads",
-    "spend": 529.79
-  },
-  {
-    "date": "2026-01-14",
-    "channel": "tiktok_paid_ads",
-    "spend": 327.92
-  }
-]
+{
+   "date": "2026-01-14",
+   "channel": "youtube_paid_ads",
+   "spend": 827.67
+}
 ```
-## ➡️ ETL Layers
-**🟫 Bronze Layer:** Raw Calendly webhook events & marketing spend JSON  
-**⬜ Silver Layer:** Flattened, cleaned, type-cast, deduplicated data  
-**🟨 Gold Layer:** Curated Delta tables for analytics and dashboard visualization  
+
+## ➡️ Data Schemas (Data Contracts)
+### 🟫 Bronze Layer – Raw Events (Append-Only)
+- invitee_id: string
+- event_type: string
+- event_created_at: timestamp
+- invitee_email: string
+- scheduled_event_start_time: timestamp
+- utm_source: string
+- utm_campaign: string
+- raw_payload: struct (JSON)
+
+Bronze data preserves source-system fidelity and is not mutated.
+
+### ⬜ Silver Layer – Cleaned & Validated
+- invitee_id: string (Primary Key)
+- booking_date: date
+- channel: string
+- employee_email: string
+- event_start_time: timestamp
+- ingestion_date: date
+- is_valid_record: boolean
+ 
+#### Applied transformations:
+- Type casting and schema enforcement
+- Null handling and field standardization
+- Deduplication using business keys
+- Data validation rules
+
+### 🟨 Gold Layer – Analytics Ready
+- booking_date: date (Partition Column)
+- channel: string
+- total_bookings: int
+- total_spend: double
+- cost_per_booking: double
+
+Designed for BI tools, dashboards, and ad-hoc SQL queries.
+
+### ✅ Data Quality Checks
+Data quality validations are enforced primarily in the Silver and Gold layers:
+- Not-null checks on primary keys (invitee_id)
+- Timestamp sanity checks (event_time ≤ ingestion_time)
+- Deduplication of duplicate booking events
+- Spend values ≥ 0
+- Booking counts ≥ 0
+
+Invalid or rejected records can be isolated for monitoring and troubleshooting.
+
+### 🧩 Partition Strategy (Delta Lake)
+Delta tables are partitioned by booking_date to:
+- Minimize data scanned during time-based queries
+- Improve Spark and Athena query performance
+- Support efficient incremental loads and reprocessing
+
+Partitioning is intentionally kept low-cardinality to avoid small-file and metadata issues.
 
 ## 📊 Key Metrics & Business Insights
 ✅ Daily Calls Booked by Source – count of Calendly bookings per source per day  
