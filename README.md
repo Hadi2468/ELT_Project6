@@ -76,6 +76,7 @@ Supported channels:
 Bronze data preserves source-system fidelity and is not mutated.
 
 ### ⬜ Silver Layer – Cleaned & Validated
+- event_date: date (Partition Column)
 - invitee_id: string (Primary Key)
 - booking_date: date
 - channel: string
@@ -87,12 +88,14 @@ Bronze data preserves source-system fidelity and is not mutated.
 #### Applied transformations:
 - Type casting and schema enforcement
 - Null handling and field standardization
-- Deduplication using business keys
+- Deduplication using Primary key
 - Data validation rules
 
 ### 🟨 Gold Layer – Analytics Ready
 - booking_date: date (Partition Column)
 - channel: string
+- booking_hour: timestamp
+- booking_week: int
 - total_bookings: int
 - total_spend: double
 - cost_per_booking: double
